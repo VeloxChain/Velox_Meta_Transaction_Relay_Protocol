@@ -56,14 +56,15 @@ exports.signPayload = async (signingAddr, txRelay, whitelistOwner, destinationAd
   let hash
   let sig
   let retVal = {}
-  data = exports.encodeFunctionTxData(functionName, functionTypes, functionParams)
 
+  data = exports.encodeFunctionTxData(functionName, functionTypes, functionParams)
   nonce = await txRelay.getNonce.call(signingAddr)
   //Tight packing, as Solidity sha3 does
-  hashInput = '0x1900' + txRelay.address.slice(2) + whitelistOwner.slice(2) + pad(nonce.toString('16')).slice(2)
+  hashInput = '0x1900' + txRelay.address.slice(2) + whitelistOwner.slice(2) + pad(nonce.toString('hex')).slice(2)
     + destinationAddress.slice(2) + data.slice(2)
+
   hash = solsha3(hashInput)
-  sig = utils.ecsign(new Buffer(utils.stripHexPrefix(hash), 'hex'), privateKey)
+  sig = utils.ecsign(new Buffer(utils.stripHexPrefix(hash), 'hex'), privateKey);
   // sig = lightwallet.signing.signMsgHash(lw, keyFromPw, hash, signingAddr)
   retVal.r = '0x' + sig.r.toString('hex')
   retVal.s = '0x' + sig.s.toString('hex')
@@ -72,6 +73,7 @@ exports.signPayload = async (signingAddr, txRelay, whitelistOwner, destinationAd
   retVal.hash = hash
   retVal.nonce = nonce
   retVal.dest = destinationAddress
+
   return retVal
 }
 

@@ -41,11 +41,12 @@ contract('Relay transaction', function (accounts) {
 
     let types = ['address','string']
     let params = [signer,'zdpuAoeFPoyCp4hU6jb9aNgrz2GpHcBZRzm8gfGMkBb3Z5n15']
-
+      console.log("testing done 1...");
     p = await helper.signPayload(signer, txRelayContract, zeroAddress, bikeCoinNetworkContract.address,
       'createUserProfile', types, params,wallet.getPrivateKey())
-
-    let tx = await txRelayContract.relayMetaTx(p.v, p.r, p.s, p.dest, p.data, 0)
+      console.log("testing done 2..." + p.v + " - " + p.r + " - " + p.dest + " - " + p.data);
+    let tx = await txRelayContract.relayMetaTx(p.v, p.r, p.s, p.dest, p.data, zeroAddress)
+      console.log("testing done 3...");
     let profile1 = await bikeCoinNetworkContract.getUserProfile.call(signer)
     console.log("profile 1: ", profile1)
 
@@ -58,7 +59,7 @@ contract('Relay transaction', function (accounts) {
     p = await helper.signPayload(signer2, txRelayContract, zeroAddress, bikeCoinNetworkContract.address,
       'createUserProfile', types, params,helper.wallet1.getPrivateKey())
 
-    tx = await txRelayContract.relayMetaTx(p.v, p.r, p.s, p.dest, p.data, 0)
+    tx = await txRelayContract.relayMetaTx(p.v, p.r, p.s, p.dest, p.data, 0)/// => need to fix 0 => zeroAddress otherwise throw exception
     let profile2 = await bikeCoinNetworkContract.getUserProfile.call(signer2)
     console.log("profile 2: ", profile2)
 
